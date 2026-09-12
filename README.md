@@ -6,18 +6,24 @@ Windows (la misma vía que reportan los dispositivos reales), combinado con
 `SetCursorPos`, que es más confiable que mover el mouse por software cuando
 la app objetivo a veces "no toma" los clicks.
 
+Cada pestaña muestra solo lo esencial (botón de inicio/parada + estado);
+todo lo demás vive detrás de su botón **"⚙ Configurar"**, para que la
+ventana ocupe poco espacio si la dejás flotando sobre otra app.
+
 ## Funciones
 
 - **Autoclicker**: click izquierdo/derecho/medio, simple o doble, en la
   posición actual del cursor o en una posición fija capturada con cuenta
   regresiva. Intervalo configurable en hs/min/seg/ms. Repetición infinita o
-  por cantidad de clicks.
+  por cantidad de clicks. (Todo esto en Autoclicker → Configurar.)
 - **Macro (grabar/reproducir)**: graba movimientos de mouse, clicks y teclas
   con su tiempo real (como TinyTask) y los reproduce igual, con velocidad y
   cantidad de repeticiones configurables. Se puede guardar/cargar como
-  archivo `.actm`.
+  archivo `.actm`. (Guardar/cargar y opciones de reproducción en Macro →
+  Configurar.)
 - **Multi-posición**: lista de coordenadas capturadas con cuenta regresiva;
-  hace click en cada una en secuencia, en loop.
+  hace click en cada una en secuencia, en loop. (Quitar/limpiar posiciones,
+  tipo de click, intervalo y repetición en Multi-posición → Configurar.)
 
 ## Hotkeys globales
 
