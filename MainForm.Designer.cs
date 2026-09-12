@@ -51,24 +51,24 @@ namespace AutoClicker
         {
             AutoScaleMode = AutoScaleMode.None;
             Text = "AutoClicker Tool";
-            ClientSize = new Size(340, 236);
+            ClientSize = new Size(316, 150);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             StartPosition = FormStartPosition.CenterScreen;
             Font = new Font("Segoe UI", 8.25F);
 
-            var topPanel = new Panel { Dock = DockStyle.Top, Height = 24 };
+            var topPanel = new Panel { Dock = DockStyle.Top, Height = 20 };
             chkTopMost = new CheckBox
             {
                 Text = "Encima de todo",
-                Location = new Point(6, 4),
+                Location = new Point(4, 2),
                 AutoSize = true,
                 Checked = true
             };
             lblElevation = new Label
             {
                 Text = "Admin ✓",
-                Location = new Point(255, 5),
+                Location = new Point(240, 3),
                 AutoSize = true,
                 ForeColor = Color.SeaGreen,
                 Visible = false
@@ -76,8 +76,8 @@ namespace AutoClicker
             btnRunAsAdmin = new Button
             {
                 Text = "Reiniciar como admin",
-                Location = new Point(150, 1),
-                Size = new Size(184, 20),
+                Location = new Point(126, 0),
+                Size = new Size(186, 19),
                 Visible = false
             };
             topPanel.Controls.Add(chkTopMost);
@@ -129,10 +129,10 @@ namespace AutoClicker
 
         private void BuildAutoTab(TabPage tab)
         {
-            btnAutoStart = new Button { Text = "Iniciar (F6)", Location = new Point(10, 10), Size = new Size(140, 32) };
+            btnAutoStart = new Button { Text = "Iniciar (F6)", Location = new Point(8, 8), Size = new Size(128, 28) };
             btnAutoStart.Click += btnAutoStart_Click;
-            lblAutoStatus = new Label { Text = "Detenido.", Location = new Point(160, 18), AutoSize = true };
-            btnAutoSettings = new Button { Text = "⚙ Configurar", Location = new Point(10, 50), Size = new Size(140, 26) };
+            lblAutoStatus = new Label { Text = "Detenido.", Location = new Point(144, 15), AutoSize = true };
+            btnAutoSettings = new Button { Text = "⚙ Configurar", Location = new Point(8, 40), Size = new Size(128, 24) };
 
             tab.Controls.Add(btnAutoStart);
             tab.Controls.Add(lblAutoStatus);
@@ -217,12 +217,12 @@ namespace AutoClicker
 
         private void BuildMacroTab(TabPage tab)
         {
-            btnRecord = new Button { Text = "Grabar (F8)", Location = new Point(10, 10), Size = new Size(140, 28) };
+            btnRecord = new Button { Text = "Grabar (F8)", Location = new Point(8, 8), Size = new Size(132, 26) };
             btnRecord.Click += btnRecord_Click;
-            btnPlay = new Button { Text = "Reproducir (F9)", Location = new Point(160, 10), Size = new Size(140, 28), Enabled = false };
+            btnPlay = new Button { Text = "Reproducir (F9)", Location = new Point(148, 8), Size = new Size(132, 26), Enabled = false };
             btnPlay.Click += btnPlay_Click;
-            lblMacroInfo = new Label { Location = new Point(10, 46), Size = new Size(300, 40), Text = "Sin grabar ni cargar ninguna macro." };
-            btnMacroSettings = new Button { Text = "⚙ Configurar", Location = new Point(10, 92), Size = new Size(140, 26) };
+            lblMacroInfo = new Label { Location = new Point(8, 38), Size = new Size(272, 34), Text = "Sin grabar ni cargar ninguna macro." };
+            btnMacroSettings = new Button { Text = "⚙ Configurar", Location = new Point(8, 74), Size = new Size(132, 24) };
 
             tab.Controls.Add(btnRecord);
             tab.Controls.Add(btnPlay);
@@ -278,14 +278,14 @@ namespace AutoClicker
 
         private void BuildSeqTab(TabPage tab)
         {
-            lstPositions = new ListBox { Location = new Point(10, 8), Size = new Size(160, 160) };
-            btnSeqAddPos = new Button { Text = "Agregar (3s)", Location = new Point(180, 8), Size = new Size(140, 26) };
+            lstPositions = new ListBox { Location = new Point(8, 8), Size = new Size(148, 108) };
+            btnSeqAddPos = new Button { Text = "Agregar (3s)", Location = new Point(164, 8), Size = new Size(132, 24) };
             btnSeqAddPos.Click += btnSeqAddPos_Click;
-            lblSeqCaptureStatus = new Label { Location = new Point(180, 36), Size = new Size(140, 30), Text = "" };
-            btnSeqStart = new Button { Text = "Iniciar (F7)", Location = new Point(180, 68), Size = new Size(140, 28) };
+            lblSeqCaptureStatus = new Label { Location = new Point(164, 34), Size = new Size(132, 20), Text = "" };
+            btnSeqStart = new Button { Text = "Iniciar (F7)", Location = new Point(164, 56), Size = new Size(132, 24) };
             btnSeqStart.Click += btnSeqStart_Click;
-            lblSeqStatus = new Label { Location = new Point(180, 100), Size = new Size(140, 50), Text = "Detenido." };
-            btnSeqSettings = new Button { Text = "⚙ Configurar", Location = new Point(180, 154), Size = new Size(140, 26) };
+            lblSeqStatus = new Label { Location = new Point(164, 82), Size = new Size(132, 34), Text = "Detenido." };
+            btnSeqSettings = new Button { Text = "⚙ Configurar", Location = new Point(164, 118), Size = new Size(132, 24) };
 
             tab.Controls.Add(lstPositions);
             tab.Controls.Add(btnSeqAddPos);

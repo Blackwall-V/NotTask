@@ -32,11 +32,16 @@ namespace AutoClicker
         // ---- Macro state ----
         private readonly MacroEngine _macroEngine = new MacroEngine();
 
+        private const int AutoTabContentHeight = 72;
+        private const int MacroTabContentHeight = 106;
+        private const int SeqTabContentHeight = 148;
+
         public MainForm()
         {
             InitializeComponent();
             TopMost = chkTopMost.Checked;
             chkTopMost.CheckedChanged += (s, e) => TopMost = chkTopMost.Checked;
+            tabControl.SelectedIndexChanged += (s, e) => AdjustWindowHeightForSelectedTab();
 
             bool isAdmin = IsRunningAsAdministrator();
             lblElevation.Visible = isAdmin;
@@ -57,6 +62,32 @@ namespace AutoClicker
             NativeMethods.RegisterHotKey(Handle, HOTKEY_SEQUENCE, NativeMethods.MOD_NOREPEAT, VK_F7);
             NativeMethods.RegisterHotKey(Handle, HOTKEY_RECORD, NativeMethods.MOD_NOREPEAT, VK_F8);
             NativeMethods.RegisterHotKey(Handle, HOTKEY_PLAY, NativeMethods.MOD_NOREPEAT, VK_F9);
+            AdjustWindowHeightForSelectedTab();
+        }
+
+        /// <summary>
+        /// Each tab needs a different amount of vertical space; a TabControl
+        /// otherwise sizes every page to match the tallest one, leaving blank
+        /// space on the smaller tabs. Resize the form itself to fit whichever
+        /// tab is active instead.
+        /// </summary>
+        private void AdjustWindowHeightForSelectedTab()
+        {
+            int contentHeight;
+            switch (tabControl.SelectedIndex)
+            {
+                case 1: contentHeight = MacroTabContentHeight; break;
+                case 2: contentHeight = SeqTabContentHeight; break;
+                default: contentHeight = AutoTabContentHeight; break;
+            }
+
+            int nonTabChrome = ClientSize.Height - tabControl.Height;
+            int tabHeaderHeight = tabControl.Height - tabControl.DisplayRectangle.Height;
+            int desiredHeight = nonTabChrome + tabHeaderHeight + contentHeight;
+            if (desiredHeight != ClientSize.Height)
+            {
+                ClientSize = new Size(ClientSize.Width, desiredHeight);
+            }
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
