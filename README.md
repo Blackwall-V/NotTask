@@ -43,13 +43,23 @@ powershell -ExecutionPolicy Bypass -File build.ps1
 Esto genera `AutoClicker.exe` en la misma carpeta. Se puede copiar y
 ejecutar en cualquier PC con Windows 10/11 sin instalar nada más.
 
-## Sobre juegos que "no toman" los clicks
+## Sobre apps/juegos que "no toman" los clicks
 
-- Si el juego corre como **administrador**, hay que ejecutar
-  `AutoClicker.exe` también como administrador (click derecho → Ejecutar
-  como administrador). Windows bloquea la entrada simulada entre procesos
-  con distinto nivel de privilegios (UIPI).
+- **Causa más común: UIPI.** Si la ventana destino (juego, app, o incluso un
+  ícono de la barra de tareas) corre con más privilegios que AutoClicker,
+  Windows descarta silenciosamente el input simulado (User Interface
+  Privilege Isolation). La app detecta si se está ejecutando como
+  administrador y, si no, muestra un botón **"Reiniciar como
+  administrador"** arriba de todo para solucionarlo con un click.
 - Si el juego usa **anti-cheat de kernel** (Easy Anti-Cheat, BattlEye,
   Vanguard, etc.), bloquea intencionalmente los eventos de `SendInput` como
   medida anti-trampas. Esto es una protección deliberada del juego: esta
   herramienta no intenta evadirla.
+
+## Otras funciones de la interfaz
+
+- **Mantener encima de otras ventanas**: fija la ventana de AutoClicker
+  siempre visible por encima de cualquier otra app (activado por defecto).
+- La app declara soporte DPI per-monitor, para que las posiciones
+  capturadas coincidan con las coordenadas reales en pantallas con
+  escalado (125%, 150%, etc.) o en setups multi-monitor con distinto DPI.

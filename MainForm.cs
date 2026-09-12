@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
+using System.Security.Principal;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -31,6 +33,14 @@ namespace AutoClicker
         public MainForm()
         {
             InitializeComponent();
+            TopMost = chkTopMost.Checked;
+            chkTopMost.CheckedChanged += (s, e) => TopMost = chkTopMost.Checked;
+
+            bool isAdmin = IsRunningAsAdministrator();
+            lblElevation.Visible = isAdmin;
+            btnRunAsAdmin.Visible = !isAdmin;
+            btnRunAsAdmin.Click += btnRunAsAdmin_Click;
+
             _macroEngine.PlaybackFinished += () => BeginInvoke(new Action(() =>
             {
                 btnPlay.Text = "Reproducir (F9)";
@@ -371,6 +381,36 @@ namespace AutoClicker
                     btnPlay.Enabled = loaded.Count > 0;
                     btnSaveMacro.Enabled = loaded.Count > 0;
                 }
+            }
+        }
+
+        // ================= PRIVILEGIOS =================
+
+        private static bool IsRunningAsAdministrator()
+        {
+            using (var identity = WindowsIdentity.GetCurrent())
+            {
+                var principal = new WindowsPrincipal(identity);
+                return principal.IsInRole(WindowsBuiltInRole.Administrator);
+            }
+        }
+
+        private void btnRunAsAdmin_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var psi = new ProcessStartInfo
+                {
+                    FileName = Application.ExecutablePath,
+                    UseShellExecute = true,
+                    Verb = "runas"
+                };
+                Process.Start(psi);
+                Application.Exit();
+            }
+            catch (System.ComponentModel.Win32Exception)
+            {
+                // El usuario canceló el cuadro de UAC.
             }
         }
 
