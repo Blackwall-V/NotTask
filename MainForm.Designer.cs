@@ -42,6 +42,7 @@ namespace AutoClicker
 
         private void InitializeComponent()
         {
+            AutoScaleMode = AutoScaleMode.None;
             Text = "AutoClicker Tool";
             ClientSize = new Size(480, 460);
             FormBorderStyle = FormBorderStyle.FixedSingle;
