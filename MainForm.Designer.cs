@@ -18,8 +18,10 @@ namespace AutoClicker
         private RadioButton radAutoCurrentPos, radAutoFixedPos;
         private Button btnAutoCapturePos;
         private Label lblAutoCapturedPos;
+        private CheckBox chkAutoUseWindowMsg;
         private RadioButton radAutoUntilStopped, radAutoCount;
         private NumericUpDown numAutoCount;
+        private NumericUpDown numAutoClickHold;
         private Button btnAutoStart;
         private Label lblAutoStatus;
 
@@ -41,7 +43,7 @@ namespace AutoClicker
         private void InitializeComponent()
         {
             Text = "AutoClicker Tool";
-            ClientSize = new Size(480, 444);
+            ClientSize = new Size(480, 460);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             StartPosition = FormStartPosition.CenterScreen;
@@ -128,42 +130,56 @@ namespace AutoClicker
             grpInterval.Controls.Add(numAutoSeconds);
             grpInterval.Controls.Add(numAutoMillis);
 
-            var grpPos = new GroupBox { Text = "Posición del click", Location = new Point(8, 86), Size = new Size(444, 70) };
+            var grpPos = new GroupBox { Text = "Posición del click", Location = new Point(8, 86), Size = new Size(444, 88) };
             radAutoCurrentPos = new RadioButton { Text = "Posición actual del cursor", Location = new Point(10, 16), Checked = true, AutoSize = true };
             radAutoFixedPos = new RadioButton { Text = "Posición fija:", Location = new Point(10, 36), AutoSize = true };
             btnAutoCapturePos = new Button { Text = "Capturar posición (3s)", Location = new Point(110, 33), Size = new Size(150, 24) };
             lblAutoCapturedPos = new Label { Text = "Sin capturar.", Location = new Point(268, 37), Size = new Size(170, 16) };
+            chkAutoUseWindowMsg = new CheckBox
+            {
+                Text = "Enviar directo a la ventana (ignora si esta app tapa el punto)",
+                Location = new Point(10, 62),
+                AutoSize = true,
+                Enabled = false
+            };
             btnAutoCapturePos.Click += btnAutoCapturePos_Click;
+            radAutoFixedPos.CheckedChanged += (s, e) => chkAutoUseWindowMsg.Enabled = radAutoFixedPos.Checked;
             grpPos.Controls.Add(radAutoCurrentPos);
             grpPos.Controls.Add(radAutoFixedPos);
             grpPos.Controls.Add(btnAutoCapturePos);
             grpPos.Controls.Add(lblAutoCapturedPos);
+            grpPos.Controls.Add(chkAutoUseWindowMsg);
 
-            var grpRepeat = new GroupBox { Text = "Repetición", Location = new Point(8, 162), Size = new Size(444, 50) };
-            radAutoUntilStopped = new RadioButton { Text = "Hasta detener (F6)", Location = new Point(10, 18), Checked = true, AutoSize = true };
-            radAutoCount = new RadioButton { Text = "Cantidad de clicks:", Location = new Point(170, 18), AutoSize = true };
-            numAutoCount = new NumericUpDown { Location = new Point(300, 16), Width = 70, Maximum = 1000000, Minimum = 1, Value = 10 };
+            var grpRepeat = new GroupBox { Text = "Repetición", Location = new Point(8, 180), Size = new Size(444, 46) };
+            radAutoUntilStopped = new RadioButton { Text = "Hasta detener (F6)", Location = new Point(10, 16), Checked = true, AutoSize = true };
+            radAutoCount = new RadioButton { Text = "Cantidad de clicks:", Location = new Point(170, 16), AutoSize = true };
+            numAutoCount = new NumericUpDown { Location = new Point(300, 14), Width = 70, Maximum = 1000000, Minimum = 1, Value = 10 };
             grpRepeat.Controls.Add(radAutoUntilStopped);
             grpRepeat.Controls.Add(radAutoCount);
             grpRepeat.Controls.Add(numAutoCount);
 
-            btnAutoStart = new Button { Text = "Iniciar (F6)", Location = new Point(8, 220), Size = new Size(130, 30) };
+            var lblHold = new Label { Text = "Duración del click (ms):", Location = new Point(8, 234), AutoSize = true };
+            numAutoClickHold = new NumericUpDown { Location = new Point(150, 231), Width = 55, Minimum = 1, Maximum = 500, Value = 20 };
+
+            btnAutoStart = new Button { Text = "Iniciar (F6)", Location = new Point(8, 262), Size = new Size(120, 28) };
             btnAutoStart.Click += btnAutoStart_Click;
-            lblAutoStatus = new Label { Text = "Detenido.", Location = new Point(146, 227), AutoSize = true };
+            lblAutoStatus = new Label { Text = "Detenido.", Location = new Point(136, 268), AutoSize = true };
 
             var note = new Label
             {
-                Location = new Point(8, 258),
-                Size = new Size(444, 74),
+                Location = new Point(8, 296),
+                Size = new Size(444, 60),
                 Font = new Font("Segoe UI", 7.5F),
                 ForeColor = SystemColors.GrayText,
-                Text = "Los clicks se simulan con SendInput a nivel de sistema operativo, más confiable que mover el mouse por software. Algunos juegos con anti-cheat de kernel (EAC, BattlEye, Vanguard) bloquean intencionalmente esta técnica."
+                Text = "SendInput es más confiable que mover el mouse por software. \"Enviar directo a la ventana\" evita que esta misma app tape el click, pero ninguno de los dos evita el anti-cheat de kernel (EAC, BattlEye, Vanguard) ni el bloqueo de Windows (UIPI) entre procesos con distinto privilegio."
             };
 
             tab.Controls.Add(grpButton);
             tab.Controls.Add(grpInterval);
             tab.Controls.Add(grpPos);
             tab.Controls.Add(grpRepeat);
+            tab.Controls.Add(lblHold);
+            tab.Controls.Add(numAutoClickHold);
             tab.Controls.Add(btnAutoStart);
             tab.Controls.Add(lblAutoStatus);
             tab.Controls.Add(note);

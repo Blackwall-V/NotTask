@@ -55,6 +55,20 @@ ejecutar en cualquier PC con Windows 10/11 sin instalar nada más.
   Vanguard, etc.), bloquea intencionalmente los eventos de `SendInput` como
   medida anti-trampas. Esto es una protección deliberada del juego: esta
   herramienta no intenta evadirla.
+- **Esta misma app tapa el punto de click.** Con "Mantener encima de otras
+  ventanas" activado, si la ventana de AutoClicker queda físicamente sobre
+  el punto donde tiene que clickear, el click le llega a AutoClicker en vez
+  de a la app de abajo (así funciona el enrutamiento de clicks por posición
+  en pantalla). En la pestaña Autoclicker, con "Posición fija" tildá
+  **"Enviar directo a la ventana"**: al capturar la posición se guarda el
+  handle de esa ventana específica y los clicks se le mandan directo por
+  mensaje de Windows (`PostMessage`), sin importar qué haya arriba en
+  pantalla. No sirve para "posición actual del cursor" (no hay ventana fija
+  que capturar) y tampoco evade UIPI ni anti-cheat.
+- **Clicks muy rápidos que no se registran.** Algunas apps necesitan que el
+  botón quede "presionado" un mínimo de tiempo para contar el click. Ajustá
+  **"Duración del click (ms)"** en la pestaña Autoclicker (subiendo el
+  valor si los clicks rápidos no se registran).
 
 ## Otras funciones de la interfaz
 

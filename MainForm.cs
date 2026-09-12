@@ -21,6 +21,8 @@ namespace AutoClicker
         private Thread _autoClickThread;
         private int _fixedX, _fixedY;
         private bool _hasFixedPos;
+        private IntPtr _fixedHwnd;
+        private int _fixedClientX, _fixedClientY;
 
         // ---- Multi-position state ----
         private volatile bool _sequenceRunning;
@@ -130,6 +132,17 @@ namespace AutoClicker
             int fx = _fixedX, fy = _fixedY;
             bool infinite = radAutoUntilStopped.Checked;
             int count = (int)numAutoCount.Value;
+            int holdMs = (int)numAutoClickHold.Value;
+            bool useWindowMsg = fixedPos && chkAutoUseWindowMsg.Checked;
+            IntPtr targetHwnd = _fixedHwnd;
+            int clientX = _fixedClientX, clientY = _fixedClientY;
+
+            if (useWindowMsg && (targetHwnd == IntPtr.Zero || !NativeMethods.IsWindow(targetHwnd)))
+            {
+                MessageBox.Show(this, "La ventana capturada ya no existe. Volvé a capturar la posición.",
+                    "AutoClicker", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
             _autoClickRunning = true;
             btnAutoStart.Text = "Detener (F6)";
@@ -140,9 +153,16 @@ namespace AutoClicker
                 int done = 0;
                 while (_autoClickRunning && (infinite || done < count))
                 {
-                    if (fixedPos) InputSimulator.MoveTo(fx, fy);
-                    if (doubleClick) InputSimulator.DoubleClick(button);
-                    else InputSimulator.Click(button);
+                    if (useWindowMsg)
+                    {
+                        InputSimulator.PostClickToWindow(targetHwnd, clientX, clientY, button, doubleClick, holdMs, InputSimulator.DoubleClickGapMs);
+                    }
+                    else
+                    {
+                        if (fixedPos) InputSimulator.MoveTo(fx, fy);
+                        if (doubleClick) InputSimulator.DoubleClick(button, holdMs, InputSimulator.DoubleClickGapMs);
+                        else InputSimulator.Click(button, holdMs);
+                    }
                     done++;
 
                     int shown = done;
@@ -173,6 +193,14 @@ namespace AutoClicker
             StartCountdownCapture(3, lblAutoCapturedPos, (x, y) =>
             {
                 _fixedX = x; _fixedY = y; _hasFixedPos = true;
+
+                var screenPt = new POINT { X = x, Y = y };
+                _fixedHwnd = NativeMethods.WindowFromPoint(screenPt);
+                var clientPt = screenPt;
+                NativeMethods.ScreenToClient(_fixedHwnd, ref clientPt);
+                _fixedClientX = clientPt.X;
+                _fixedClientY = clientPt.Y;
+
                 lblAutoCapturedPos.Text = string.Format("Posición capturada: ({0}, {1})", x, y);
             });
         }

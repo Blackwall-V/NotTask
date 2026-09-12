@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 
 namespace AutoClicker
@@ -38,16 +39,74 @@ namespace AutoClicker
 
         public static void Click(MouseButtonKind button)
         {
+            Click(button, ClickHoldMs);
+        }
+
+        public static void Click(MouseButtonKind button, int holdMs)
+        {
             MouseDown(button);
-            Thread.Sleep(ClickHoldMs);
+            Thread.Sleep(holdMs);
             MouseUp(button);
         }
 
         public static void DoubleClick(MouseButtonKind button)
         {
-            Click(button);
-            Thread.Sleep(DoubleClickGapMs);
-            Click(button);
+            DoubleClick(button, ClickHoldMs, DoubleClickGapMs);
+        }
+
+        public static void DoubleClick(MouseButtonKind button, int holdMs, int gapMs)
+        {
+            Click(button, holdMs);
+            Thread.Sleep(gapMs);
+            Click(button, holdMs);
+        }
+
+        /// <summary>
+        /// Sends the click directly to a specific window handle via PostMessage,
+        /// bypassing screen z-order entirely. Unlike SendInput+SetCursorPos, this
+        /// still reaches the target even if another window (including this app,
+        /// when "mantener encima" is on) visually covers that screen position.
+        /// It does not bypass UIPI: the target window still needs to be at the
+        /// same or lower integrity level as this process.
+        /// </summary>
+        public static void PostClickToWindow(IntPtr hWnd, int clientX, int clientY, MouseButtonKind button, bool doubleClick, int holdMs, int gapMs)
+        {
+            if (hWnd == IntPtr.Zero || !NativeMethods.IsWindow(hWnd)) return;
+
+            int lp = (clientY << 16) | (clientX & 0xFFFF);
+            var lParam = new IntPtr(lp);
+            uint downMsg, upMsg;
+            IntPtr wParam;
+            switch (button)
+            {
+                case MouseButtonKind.Right:
+                    downMsg = (uint)NativeMethods.WM_RBUTTONDOWN;
+                    upMsg = (uint)NativeMethods.WM_RBUTTONUP;
+                    wParam = (IntPtr)NativeMethods.MK_RBUTTON;
+                    break;
+                case MouseButtonKind.Middle:
+                    downMsg = (uint)NativeMethods.WM_MBUTTONDOWN;
+                    upMsg = (uint)NativeMethods.WM_MBUTTONUP;
+                    wParam = (IntPtr)NativeMethods.MK_MBUTTON;
+                    break;
+                default:
+                    downMsg = (uint)NativeMethods.WM_LBUTTONDOWN;
+                    upMsg = (uint)NativeMethods.WM_LBUTTONUP;
+                    wParam = (IntPtr)NativeMethods.MK_LBUTTON;
+                    break;
+            }
+
+            NativeMethods.PostMessage(hWnd, downMsg, wParam, lParam);
+            Thread.Sleep(holdMs);
+            NativeMethods.PostMessage(hWnd, upMsg, IntPtr.Zero, lParam);
+
+            if (doubleClick)
+            {
+                Thread.Sleep(gapMs);
+                NativeMethods.PostMessage(hWnd, downMsg, wParam, lParam);
+                Thread.Sleep(holdMs);
+                NativeMethods.PostMessage(hWnd, upMsg, IntPtr.Zero, lParam);
+            }
         }
 
         public static void MouseDown(MouseButtonKind button)
